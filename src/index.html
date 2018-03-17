@@ -33,10 +33,10 @@
                 </ul>
             </div>
             <br/>
-            <h4 style="float: left; color: #a94442;" data-bind="text: searchKey"></h4><h4 style="float: left">共有以下选择：</h4>
+            <h4 style="float: left; color: #a94442;" data-bind="text: displayKey"></h4><h4 style="float: left">共有以下选择：</h4>
 
             <div class="list-group" data-bind="foreach: startArray">
-                <button type="button" class="list-group-item" data-bind="text: name, click: $parent.hideMarker($data)"></button>
+                <button type="button" class="list-group-item" data-bind="text: name, click: $parent.hideMarker($data, $index)"></button>
             </div>
         </div>
         <!-- 选定地图的div容器 -->
