@@ -4,6 +4,6 @@ this is a very simple map for searching "tasty food" around bell tower, Xi'an. I
 
 
 ## How to start
-Simply open the index.html to see this map in your browser.
+Simply open the src/index.html to see this map in your browser.
 
 
