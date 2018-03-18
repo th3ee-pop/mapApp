@@ -16,7 +16,11 @@ window.init = function () {
     });
 
     map.setFitView();
+    ko.applyBindings(new viewModel());
+
+
 };
+
 /*地图初始化*/
 
 function viewModel() {
@@ -25,18 +29,62 @@ function viewModel() {
     const url = 'http://restapi.amap.com/v3/place/around?';
     const self = this;
 
+
     self.searchKey = ko.observable('钟楼附近美食');
     self.displayKey = ko.observable('钟楼附近美食');
     self.startArray = ko.observableArray();
     self.startKey = '肯德基';
+    self.sideBar = ko.observable(true);
+    self.hidden = ko.observable('隐藏');
 
     const infoWindow = new AMap.InfoWindow();
 
+    self.hideSideBar = function () {
+        self.sideBar(!self.sideBar());
+        console.log(self.sideBar);
+        self.hidden ( self.sideBar() ? '隐藏' : '展开' );
+        console.log(self.sideBar);
+    };
+
+    self.getCarInfo = function (marker, ll) {
+        $.ajax({
+            url: 'http://api.map.baidu.com/parking/search?',
+            type: 'GET',
+            data: {
+                location: ll,
+                coordtype: 'bd09ll',
+                ak: 'HxYe8PWRdQNFNoXr3Of8UqaMTd0oq39r'
+            },
+            dataType: 'jsonp',
+            success: function (data) {
+                console.log(data);
+                if(data.recommendStops.length > 0){
+                    data.recommendStops.forEach(d => {
+                        marker.target.content.push(d.name);
+                    });
+                } else {
+                    marker.target.content.push('暂无');
+                }
+
+                console.log(marker.target.content);
+                infoWindow.setContent(marker.target.content.join('<br>'));
+                infoWindow.open(map, marker.target.getPosition());
+
+                return data;
+            },
+            error: function (data) {
+                console.log(data);
+                return {status: 'error'}
+            }
+        })
+    };
+    /*通过第三方api百度map，获取上车信息*/
 
     self.showWindow = function(e) {
         console.log(e);
-        infoWindow.setContent(e.target.content.join('<br>'));
-        infoWindow.open(map, e.target.getPosition());
+        const ll = e.lnglat.lng + ','+ e.lnglat.lat;
+        console.log(ll);
+        self.getCarInfo(e, ll);
     };
     /*用于展示商户的信息*/
 
@@ -48,7 +96,7 @@ function viewModel() {
                 position: d.location.split(','),
                 title: d.name,
             });
-            newMarker.content = ['名称:'+ d.name, '地址:' + d.address, '电话:' + d.tel];
+            newMarker.content = ['名称:'+ d.name, '地址:' + d.address, '电话:' + d.tel, '上车地点推荐：'];
             newMarker.on('click', self.showWindow);
             newMarker.setAnimation('AMAP_ANIMATION_DROP');
             markers.push(newMarker);
@@ -57,15 +105,15 @@ function viewModel() {
     /*为当前api返回的所有商户生成marker*/
 
     self.hideMarker = function (data, index) {
-       // console.log(index());
+        infoWindow.close();
         if (markers.length > 0) {
             for (let i = 0; i < markers.length; i++) {
                 if (i === index())
                 {
-                    markers[i].setMap(map);
+                    markers[i].show();
                     markers[i].setAnimation('AMAP_ANIMATION_DROP');
                 }  else {
-                    markers[i].setMap(null);
+                    markers[i].hide();
                 }
             }
         }
@@ -75,7 +123,7 @@ function viewModel() {
 
     self.clearMarker = function () {
         markers.forEach(marker => {
-            marker.setMap(null);
+            marker.hide();
         })
     };
     /*清楚当前所有marker*/
@@ -158,4 +206,4 @@ function viewModel() {
     /*默认加载各种分类的美食地点*/
 }
 
-ko.applyBindings(new viewModel());
+

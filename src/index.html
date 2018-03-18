@@ -19,12 +19,16 @@
         <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
     </head>
     <body>
-    <div class="map_container">
-        <div class="options-box">
-            <h1>钟楼附近的美食</h1>
+    <div class="map_container clearfix">
+        <nav class="options-box col-md-2 col-xs-6" style="overflow: auto"  data-bind="visible: sideBar">
+
+            <div class="navbar-header">
+                <h1>钟楼附近的美食</h1>
+            </div>
+
             <div class="btn-group">
-                <button type="button"  class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    选择美食种类 <span class="caret"></span>
+                <button  type="button"  class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    选择美食种类 <span  class="caret"></span>
                 </button>
                 <br/>
 
@@ -35,12 +39,23 @@
             <br/>
             <h4 style="float: left; color: #a94442;" data-bind="text: displayKey"></h4><h4 style="float: left">共有以下选择：</h4>
 
-            <div class="list-group" data-bind="foreach: startArray">
-                <button type="button" class="list-group-item" data-bind="text: name, click: $parent.hideMarker($data, $index)"></button>
+            <div >
+                <div  class="list-group" data-bind="foreach: startArray">
+                    <button type="button" class="list-group-item" data-bind="text: name, click: $parent.hideMarker($data, $index)"></button>
+                </div>
             </div>
+
+        </nav>
+        <div>
+            <button  type="button" class="btn btn-default" aria-label="Left Align" data-bind="click: hideSideBar">
+                <span aria-hidden="true" data-bind="text: hidden"></span>
+            </button>
         </div>
-        <!-- 选定地图的div容器 -->
-        <div id="ali_map"></div>
+
+
+        <div id="ali_map">
+        </div>
+
     </div>
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/knockout-3.4.2.js"></script>
